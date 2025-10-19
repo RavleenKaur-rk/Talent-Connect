@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TalentConnect - Create Event</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background: #f8f6ff;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Navbar - Exact copy from main page */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+    header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #5b21b6;
+    }
+    header .logo-img {
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    header nav {
+      display: flex;
+      align-items: center;
+    }
+    header nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    header nav a:hover {
+      color: #f97316;
+    }
+    
+    /* Mobile menu button */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+    
+    .menu-toggle span {
+      width: 100%;
+      height: 3px;
+      background-color: #333;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+    
+    /* Auth buttons with hover effects */
+    header .auth {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    header .auth button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    header .auth .login {
+      background: transparent;
+      color: #5b21b6;
+      border: 2px solid #5b21b6;
+    }
+    
+    header .auth .login:hover {
+      background: #5b21b6;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(91, 33, 182, 0.3);
+    }
+    
+    header .auth .signup {
+      background: #f97316;
+      color: white;
+      border: 2px solid #f97316;
+    }
+    
+    header .auth .signup:hover {
+      background: #ff8c3f;
+      border-color: #ff8c3f;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
+    }
+
+    /* Mobile menu styles */
+    .mobile-auth {
+      display: none;
+      flex-direction: column;
+      gap: 15px;
+      padding: 20px;
+      width: 100%;
+    }
+    
+    .mobile-auth button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    
+    .mobile-auth .login {
+      background: transparent;
+      color: #5b21b6;
+      border: 2px solid #5b21b6;
+    }
+    
+    .mobile-auth .signup {
+      background: #f97316;
+      color: white;
+      border: 2px solid #f97316;
+    }
+
+    /* Page title */
+    .page-header {
+      margin-top: 70px;
+      padding: 30px 40px 0;
+      text-align: center;
+    }
+    .page-header h1 {
+      font-size: 36px;
+      font-weight: 800;
+      color: #5b21b6;
+      margin-bottom: 10px;
+    }
+    .page-header p {
+      color: #5b21b6;
+      font-size: 18px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Layout */
+    .main {
+      display: flex;
+      min-height: calc(100vh - 70px);
+      margin-top: 0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: #5b21b6; /*#8e44ad;*/
+      color: #fff;
+      padding-top: 20px;
+      position: sticky;
+      top: 70px;
+      height: calc(100vh - 70px);
+    }
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    .sidebar ul li {
+      padding: 15px 20px;
+      cursor: pointer;
+      border-left: 4px solid transparent;
+      transition: 0.3s;
+    }
+    .sidebar ul li.active {
+      background: #9b59b6;
+      border-left: 4px solid #ff8c42;
+    }
+    .sidebar ul li:hover {
+      background: #a569bd;
+    }
+
+    /* Main content */
+    .content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+    .section {
+      display: none;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      border-top: 4px solid #8e44ad;
+    }
+    .section.active {
+      display: block;
+    }
+    h3 {
+      margin-bottom: 20px;
+      font-size:22px; 
+      font-weight:bold; 
+      color:#5b21b6;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 8px 0;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #8e44ad;
+      box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      color: #6a4c93;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    
+
+    /* Navigation buttons */
+    .navigation {
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .navigation button {
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: 2px solid #ddd;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    .prev-btn {
+      background: #fff;
+      color: #6a4c93;
+      border-color: #6a4c93;
+    }
+    .prev-btn:hover:not(:disabled) {
+      background: #6a4c93;
+      color: white;
+    }
+    .prev-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .next-btn {
+      background: #ff8c42;
+      color: #fff;
+      border: none;
+    }
+    .next-btn:hover {
+      background: #e57735;
+    }
+
+    /* Footer - Exact copy from main page */
+    footer {
+      background: #5b21b6;
+      color: #fff;
+      padding: 60px 40px 30px;
+      margin-top: 50px;
+    }
+    footer .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+    }
+    footer h3 {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+    footer h4 {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    footer a {
+      color: #fff;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 10px;
+      opacity: 0.9;
+      transition: opacity 0.3s;
+    }
+    footer a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    footer p {
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 1024px) {
+      header {
+        padding: 15px 20px;
+      }
+      .page-header {
+        padding: 30px 20px 0;
+      }
+      .page-header h1 {
+        font-size: 28px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      header {
+        padding: 15px;
+      }
+      
+      .menu-toggle {
+        display: flex;
+      }
+      
+      header nav {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 80%;
+        height: 100vh;
+        background: #fff;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 80px 20px 20px;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+        transition: left 0.3s ease;
+        z-index: 999;
+        overflow-y: auto;
+      }
+      
+      header nav.active {
+        left: 0;
+      }
+      
+      header nav a {
+        margin: 15px 0;
+        font-size: 18px;
+        width: 100%;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      
+      header .auth {
+        display: none;
+      }
+      
+      .mobile-auth {
+        display: flex;
+      }
+      
+      .main {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+      }
+      
+      .sidebar ul {
+        display: flex;
+        overflow-x: auto;
+      }
+      
+      .sidebar ul li {
+        white-space: nowrap;
+        min-width: 120px;
+        text-align: center;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .action-bar {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+      }
+      
+      .page-header {
+        padding: 20px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .page-header h1 {
+        font-size: 24px;
+      }
+      
+      header {
+        padding: 10px;
+      }
+      
+      .logo span {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar - Exact copy from main page -->
+  <header>
+    <div class="logo">
+      <div class="logo-img">
+        <img src="logo.jpeg" alt="Logo" style="width:35px; height: 35px;">
+      </div>
+      <span>TalentConnect</span>
+    </div>
+    
+    <div class="menu-toggle" id="menuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    
+    <nav id="mainNav">
+      <a href="Index(1).html">Home</a>
+      <a href="browseevent(2).html">Browse Events</a>
+      <a href="aboutus(3).html">About Us</a>
+      <a href="Contactus(4).html">Contact</a>
+      <a href="host_event3(5).html" style="color: #f97316; font-weight: bold;">Host Your Event</a>
+      <div class="mobile-auth">
+        <button class="login" onclick="location.href='login(6).html'">Login</button>
+        <button class="signup" onclick="location.href='login(6).html'">Sign Up</button>
+      </div>
+    </nav>
+    
+    <div class="auth">
+      <button class="login" onclick="location.href='login(6).html'">Login</button>
+      <button class="signup" onclick="location.href='login(6).html'">Sign Up</button>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Create Your Event</h1>
+    <p>Set up your event in just a few simple steps and start connecting with your audience</p>
+  </div>
+
+  
+
+  <!-- Main Layout -->
+  <div class="main">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>Steps</h2>
+      <ul id="stepList">
+        <li class="active">Event Details</li>
+        <li>Date & Time</li>
+        <li>Location</li>
+        <li>Tickets</li>
+        <li>Questions</li>
+        <li>Review</li>
+        <li>Publish</li>
+      </ul>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- Event Details -->
+      <div class="section active">
+        <h3>Event Details</h3>
+        <div class="form-group">
+          <label>Event Name *</label>
+          <input type="text" placeholder="Enter your event name">
+        </div>
+        <div class="form-group">
+          <label>Event Description *</label>
+          <textarea placeholder="Describe your event in detail" rows="5"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Event Category *</label>
+          <select>
+            <option value="">Select a category</option>
+            <option>Conference</option>
+            <option>Workshop</option>
+            <option>Concert</option>
+            <option>Meetup</option>
+            <option>Festival</option>
+            <option>Comedy Show</option>
+            <option>Sports Event</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Cover Image</label>
+          <input type="file" accept="image/*">
+          <small style="color: #666; font-size: 14px;">Upload a high-quality image that represents your event</small>
+        </div>
+        <div class="navigation">
+          <button class="prev-btn" onclick="prevStep()" disabled>Previous</button>
+          <button class="next-btn" onclick="nextStep()">Next</button>
+        </div>
+      </div>
+
+      <!-- Date & Time -->
+      <div class="section">
+        <h3>Date & Time</h3>
+        <div class="form-group">
+          <label>Event Date *</label>
+          <input type="date">
+        </div>
+        <div class="form-group">
+          <label>Start Time *</label>
+          <input type="time">
+        </div>
+        <div class="form-group">
+          <label>End Time *</label>
+          <input type="time">
+        </div>
+        <div class="form-group">
+          <label>Time Zone *</label>
+          <select>
+            <option>India Standard Time (IST)</option>
+            <option>UTC</option>
+            <option>Eastern Time (EST)</option>
+            <option>Pacific Time (PST)</option>
+          </select>
+        </div>
+        <div class="navigation">
+          <button class="prev-btn" onclick="prevStep()">Previous</button>
+          <button class="next-btn" onclick="nextStep()">Next</button>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="section">
+        <h3>Location</h3>
+        <div class="form-group">
+          <label>Event Type *</label>
+          <select>
+            <option value="">Select event type</option>
+            <option>In-person</option>
+            <option>Virtual</option>
+            <option>Hybrid</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Venue Name *</label>
+          <input type="text" placeholder="Enter venue name">
+        </div>
+        <div class="form-group">
+          <label>Complete Address *</label>
+          <textarea placeholder="Enter the complete address including city, state, and postal code" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Additional Instructions</label>
+          <textarea placeholder="Parking information, entrance details, etc." rows="3"></textarea>
+        </div>
+        <div class="navigation">
+          <button class="prev-btn" onclick="prevStep()">Previous</button>
+          <button class="next-btn" onclick="nextStep()">Next</button>
+        </div>
+      </div>
+
+      <!-- Tickets -->
+      <div class="section">
+        <h3>Tickets & Pricing</h3>
+        <div class="form-group">
+          <label>Ticket Type *</label>
+          <select>
+            <option value="">Select ticket type</option>
+            <option>Free</option>
+            <option>Paid</option>
+            <option>Registration Required</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ticket Price (₹)</label>
+          <input type="number" placeholder="Enter price per ticket" min="0">
+        </div>
+        <div class="form-group">
+          <label>Total Available Tickets *</label>
+          <input type="number" placeholder="Enter total number of tickets" min="1">
+        </div>
+        <div class="form-group">
+          <label>Early Bird Discount (%)</label>
+          <input type="number" placeholder="Enter discount percentage" min="0" max="100">
+        </div>
+        <div class="navigation">
+          <button class="prev-btn" onclick="prevStep()">Previous</button>
+          <button class="next-btn" onclick="nextStep()">Next</button>
+        </div>
+      </div>
+
+      <!-- Questions -->
+      <div class="section">
+        <h3>Registration Questions</h3>
+        <div class="form-group">
+          <label>Custom Questions for Attendees</label>
+          <textarea placeholder="Ask specific questions to better understand your attendees (optional)" rows="4"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Require Phone Number</label>
+          <select>
+            <option>No</option>
+            <option>Yes</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Collect Dietary Preferences</label>
+          <select>
+            <option>No</option>
+            <option>Yes</option>
+          </select>
+        </div>
+        <div class="navigation">
+          <button class="prev-btn" onclick="prevStep()">Previous</button>
+          <button class="next-btn" onclick="nextStep()">Next</button>
+        </div>
+      </div>
+
+      <!-- Review -->
+      <div class="section">
+        <h3>Review Your Event</h3>
+        <p style="color: #666; margin-bottom: 20px;">Please review all the details before publishing your event.</p>
+        <div style="background: #f8f6ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #8e44ad;">
+          <h4 style="color: #6a4c93; margin-bottom: 15px;">Event Summary</h4>
+          <p style="color: #666;">Your event details will be displayed here for final review. Make sure all information is accurate before publishing.</p>
+          <ul style="margin-top: 15px; color: #666;">
+            <li>✓ Event name and description</li>
+            <li>✓ Date, time, and location</li>
+            <li>✓ Ticket pricing and availability</li>
+            <li>✓ Registration requirements</li>
+          </ul>
+        </div>
+        <div class="navigation">
+          <button class="prev-btn" onclick="prevStep()">Previous</button>
+          <button class="next-btn" onclick="nextStep()">Next</button>
+        </div>
+      </div>
+
+      <!-- Publish -->
+      <div class="section">
+        <h3>Publish Your Event</h3>
+        <div style="text-align: center; padding: 40px 20px;">
+          <div style="font-size: 48px; color: #ff8c42; margin-bottom: 20px;">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <h4 style="color: #6a4c93; margin-bottom: 15px;">Ready to Go Live?</h4>
+          <p style="color: #666; margin-bottom: 30px; max-width: 400px; margin-left: auto; margin-right: auto;">Your event is ready to be published. Once published, people can discover and book tickets for your event.</p>
+          <button style="background: #ff6b35; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#e55a2b'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#ff6b35'; this.style.transform='translateY(0)'">
+            <i class="fas fa-paper-plane" style="margin-right: 10px;"></i>
+            Publish Event Now
+          </button>
+        </div>
+        <div class="navigation">
+          <button class="prev-btn" onclick="prevStep()">Previous</button>
+          <button class="next-btn" onclick="nextStep()" style="visibility: hidden;">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer - Exact copy from main page -->
+  <footer>
+    <div class="grid">
+      <div>
+        <h3>TalentConnect</h3>
+        <p>Where talent meets opportunity</p>
+      </div>
+      <div>
+        <h4>For Event Hosts</h4>
+        <a href="#">Create an Event</a>
+        <a href="#">Getting Started Guide</a>
+        <a href="#">Pricing</a>
+      </div>
+      <div>
+        <h4>For Attendees</h4>
+        <a href="#">Browse Events</a>
+        <a href="#">My Tickets</a>
+        <a href="#">Event Calendar</a>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <a href="#">Contact Us</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top:40px; opacity:0.7;">© 2025 TalentConnect. All rights reserved.</p>
+  </footer>
+
+  <script>
+    let currentStep = 0;
+    const sections = document.querySelectorAll(".section");
+    const menuItems = document.querySelectorAll("#stepList li");
+
+    function showStep(step) {
+      sections.forEach((sec, i) => {
+        sec.classList.toggle("active", i === step);
+        menuItems[i].classList.toggle("active", i === step);
+      });
+      currentStep = step;
+      
+      // Update navigation buttons
+      const prevBtn = document.querySelector('.navigation .prev-btn');
+      if (prevBtn) {
+        prevBtn.disabled = currentStep === 0;
+      }
+    }
+
+    function nextStep() {
+      if (currentStep < sections.length - 1) {
+        showStep(currentStep + 1);
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 0) {
+        showStep(currentStep - 1);
+      }
+    }
+
+    // Sidebar click navigation
+    menuItems.forEach((item, i) => {
+      item.addEventListener("click", () => showStep(i));
+    });
+
+    // Mobile menu functionality (from main page)
+    const menuToggle = document.getElementById('menuToggle');
+    const mainNav = document.getElementById('mainNav');
+    
+    menuToggle.addEventListener('click', function() {
+      mainNav.classList.toggle('active');
+      
+      // Animate hamburger icon
+      const spans = menuToggle.querySelectorAll('span');
+      if (mainNav.classList.contains('active')) {
+        spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+        spans[1].style.opacity = '0';
+        spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+      } else {
+        spans[0].style.transform = 'none';
+        spans[1].style.opacity = '1';
+        spans[2].style.transform = 'none';
+      }
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!menuToggle.contains(event.target) && !mainNav.contains(event.target)) {
+        mainNav.classList.remove('active');
+        
+        // Reset hamburger icon
+        const spans = menuToggle.querySelectorAll('span');
+        spans[0].style.transform = 'none';
+        spans[1].style.opacity = '1';
+        spans[2].style.transform = 'none';
+      }
+    });
+  </script>
+
+</body>
+</html>
