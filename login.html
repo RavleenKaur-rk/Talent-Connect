@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - TalentConnect</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+    body {background:#f9fafb; color:#333; line-height:1.6;}
+    
+    
+    .auth-hero {
+      background: linear-gradient(rgba(91,33,182,0.85), rgba(91,33,182,0.85)), url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop') no-repeat center/cover;
+      height: 30vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: #fff;
+      padding: 0 20px;
+    }
+    
+    .auth-hero h1 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+    
+    .auth-hero p {
+      margin: 20px 0;
+      font-size: 18px;
+      max-width: 700px;
+    }
+
+    /* Auth Container */
+    .auth-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 50px 20px;
+      min-height: 70vh;
+    }
+    
+    .auth-box {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 450px;
+    }
+    
+    .auth-tabs {
+      display: flex;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #eee;
+    }
+    
+    .auth-tab {
+      padding: 15px 25px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #666;
+      text-align: center;
+      flex: 1;
+      cursor: pointer;
+    }
+    
+    .auth-tab.active {
+      color: #5b21b6;
+      border-bottom: 3px solid #5b21b6;
+    }
+    
+    .auth-form h2 {
+      font-size: 28px;
+      margin-bottom: 25px;
+      color: #5b21b6;
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #5b21b6;
+    }
+    
+    .password-input {
+      position: relative;
+    }
+    
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #666;
+      pointer-events: none;
+    }
+    
+    .forgot-password {
+      display: block;
+      text-align: right;
+      margin-bottom: 25px;
+      color: #5b21b6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .forgot-password:hover {
+      text-decoration: underline;
+    }
+    
+    .auth-submit {
+      background: #5b21b6;
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    
+    .auth-submit:hover {
+      background: #7c3aed;
+    }
+    
+    .auth-switch {
+      text-align: center;
+      margin-top: 25px;
+      color: #666;
+    }
+    
+    .auth-switch a {
+      color: #5b21b6;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .auth-switch a:hover {
+      text-decoration: underline;
+    }
+
+    .custom-dialog {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    
+    .custom-dialog:target {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .dialog-content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .dialog-icon {
+      font-size: 50px;
+      color: #5b21b6;
+      margin-bottom: 20px;
+    }
+    
+    .dialog-title {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #5b21b6;
+    }
+    
+    .dialog-message {
+      margin-bottom: 25px;
+      color: #666;
+    }
+    
+    .dialog-button {
+      background: #5b21b6;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .dialog-button:hover {
+      background: #7c3aed;
+    }
+
+    
+    #login-toggle:checked ~ .auth-container .auth-box #loginForm,
+    #signup-toggle:checked ~ .auth-container .auth-box #signupForm {
+      display: block;
+    }
+    
+    #login-toggle:checked ~ .auth-container .auth-box #signupForm,
+    #signup-toggle:checked ~ .auth-container .auth-box #loginForm {
+      display: none;
+    }
+    
+    #login-toggle:checked ~ .auth-container .auth-box #loginTab,
+    #signup-toggle:checked ~ .auth-container .auth-box #signupTab {
+      color: #5b21b6;
+      border-bottom: 3px solid #5b21b6;
+    }
+    
+  
+    .toggle-input {
+      position: absolute;
+      left: -9999px;
+    }
+    
+    #show-login-password:checked ~ .toggle-password i:before {
+      content: "\f070"; 
+    }
+    
+    #show-signup-password:checked ~ .toggle-password i:before {
+      content: "\f070"; 
+    }
+    
+    #show-confirm-password:checked ~ .toggle-password i:before {
+      content: "\f070"; 
+    }
+   
+    @media (max-width: 768px) {
+      .auth-hero {
+        height: auto;
+        padding: 60px 20px;
+      }
+      
+      .auth-container {
+        padding: 40px 20px;
+      }
+      
+      .auth-box {
+        padding: 30px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .auth-hero h1 {font-size:28px;}
+      
+      .auth-hero {
+        padding: 50px 20px 40px;
+      }
+      
+      .auth-box {
+        padding: 20px;
+      }
+      
+      .auth-tab {
+        padding: 12px 15px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Toggle controls (hidden) -->
+  <input type="radio" name="form-toggle" id="login-toggle" class="toggle-input" checked>
+  <input type="radio" name="form-toggle" id="signup-toggle" class="toggle-input">
+  
+  <!-- Auth Hero Section -->
+  <section class="auth-hero">
+    <h1>Welcome to TalentConnect</h1>
+    <p>Sign in to access your account and manage your events</p>
+  </section>
+
+  <!-- Auth Container -->
+  <section class="auth-container">
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <label for="login-toggle" class="auth-tab active" id="loginTab">Login</label>
+        <label for="signup-toggle" class="auth-tab" id="signupTab">Sign Up</label>
+      </div>
+      
+      <!-- Login Form -->
+      <form class="auth-form" id="loginForm" action="#login-success" method="get">
+        <h2>Sign In to Your Account</h2>
+        
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" placeholder="Your email address" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <div class="password-input">
+            <input type="password" id="loginPassword" placeholder="Your password" required>
+            <input type="checkbox" id="show-login-password" class="toggle-input">
+            <label for="show-login-password" class="toggle-password">
+              <i class="far fa-eye"></i>
+            </label>
+          </div>
+        </div>
+        
+        <a href="#" class="forgot-password">Forgot password?</a>
+        
+        <button type="submit" class="auth-submit">Sign In</button>
+        
+        <div class="auth-switch">
+          Don't have an account? <label for="signup-toggle" class="auth-switch-link">Sign up now</label>
+        </div>
+      </form>
+      
+      <!-- Signup Form -->
+      <form class="auth-form" id="signupForm" action="#signup-success" method="get">
+        <h2>Create Your Account</h2>
+        
+        <div class="form-group">
+          <label for="signupName">Full Name</label>
+          <input type="text" id="signupName" placeholder="Your full name" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="signupEmail">Email Address</label>
+          <input type="email" id="signupEmail" placeholder="Your email address" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <div class="password-input">
+            <input type="password" id="signupPassword" placeholder="Create a password" required>
+            <input type="checkbox" id="show-signup-password" class="toggle-input">
+            <label for="show-signup-password" class="toggle-password">
+              <i class="far fa-eye"></i>
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="password-input">
+            <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+            <input type="checkbox" id="show-confirm-password" class="toggle-input">
+            <label for="show-confirm-password" class="toggle-password">
+              <i class="far fa-eye"></i>
+            </label>
+          </div>
+        </div>
+        
+        <button type="submit" class="auth-submit">Create Account</button>
+        
+        <div class="auth-switch">
+          Already have an account? <label for="login-toggle" class="auth-switch-link">Sign in</label>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Success Dialog for Signup -->
+  <div class="custom-dialog" id="signup-success">
+    <div class="dialog-content">
+      <div class="dialog-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h3 class="dialog-title">Account Created!</h3>
+      <p class="dialog-message">Your TalentConnect account has been successfully created. Welcome to our community!</p>
+      <a href="#" class="dialog-button">Continue</a>
+    </div>
+  </div>
+
+  <!-- Success Dialog for Login -->
+  <div class="custom-dialog" id="login-success">
+    <div class="dialog-content">
+      <div class="dialog-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h3 class="dialog-title">Welcome Back!</h3>
+      <p class="dialog-message">You have successfully signed in to your TalentConnect account.</p>
+      <a href="#" class="dialog-button">Continue</a>
+    </div>
+  </div>
+</body>
+</html>

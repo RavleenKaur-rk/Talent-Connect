@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TalentConnect — Plan Your Event, Hassle Free</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+   
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+    body {background:#fff; color:#333; line-height:1.6;}
+
+    header {
+      position:fixed; top:0; left:0; width:100%;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:15px 40px; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,0.1);
+      z-index:1000;
+    }
+    header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size:22px; font-weight:bold; color:#5b21b6;
+    }
+    header .logo-img {
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    header nav {display:flex; align-items:center;}
+    header nav a {margin:0 15px; text-decoration:none; color:#333; font-weight:500; white-space: nowrap;}
+    header nav a:hover {color:#f97316;}
+    
+    /* Mobile menu button */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+    
+    .menu-toggle span {
+      width: 100%;
+      height: 3px;
+      background-color: #333;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+    
+    /* Auth buttons with hover effects */
+    header .auth {display:flex; align-items:center; gap: 15px;}
+    header .auth button {
+      padding:10px 20px; 
+      border:none; 
+      border-radius:50px; 
+      cursor:pointer; 
+      font-weight:600;
+      font-size:16px;
+      transition: all 0.3s ease;
+    }
+    
+    header .auth .login {
+      background: transparent;
+      color: #5b21b6;
+      border: 2px solid #5b21b6;
+    }
+    
+    header .auth .login:hover {
+      background: #5b21b6;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(91, 33, 182, 0.3);
+    }
+    
+    header .auth .signup {
+      background: #f97316;
+      color: white;
+      border: 2px solid #f97316;
+    }
+    
+    header .auth .signup:hover {
+      background: #ff8c3f;
+      border-color: #ff8c3f;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
+    }
+
+    .mobile-auth {
+      display: none;
+      flex-direction: column;
+      gap: 15px;
+      padding: 20px;
+      width: 100%;
+    }
+    
+    .mobile-auth button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    
+    .mobile-auth .login {
+      background: transparent;
+      color: #5b21b6;
+      border: 2px solid #5b21b6;
+    }
+    
+    .mobile-auth .signup {
+      background: #f97316;
+      color: white;
+      border: 2px solid #f97316;
+    }
+
+
+    .hero {
+      background:linear-gradient(rgba(91,33,182,0.85),rgba(91,33,182,0.85)), url('https://images.unsplash.com/photo-1542038784456-1ea8e935640e') no-repeat center/cover;
+      height:85vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; color:#fff; padding:0 20px; margin-top:70px;
+    }
+    .hero h1 {font-size:48px; font-weight:800; margin-bottom:15px;}
+    .hero h1 span {color:#f97316;}
+    .hero p {margin:20px 0; font-size:18px; max-width:700px;}
+    .search-box {display:flex; background:#fff; border-radius:50px; padding:5px; max-width:500px; width:100%; margin-top:20px; box-shadow:0 5px 15px rgba(0,0,0,0.15);}
+    .search-box input {flex:1; border:none; padding:15px 20px; border-radius:50px; outline:none; font-size:16px;}
+    .search-box button {background:#5b21b6; color:#fff; padding:15px 30px; border:none; border-radius:50px; cursor:pointer; font-weight:600; font-size:16px; transition:background 0.3s;}
+    .search-box button:hover {background:#7c3aed;}
+
+    
+    section {padding:70px 40px;}
+    section h2 {font-size:32px; margin-bottom:15px; text-align:center;}
+    section h2 span {color:#5b21b6;}
+    .section-desc {text-align:center; margin-bottom:40px; color:#666; font-size:18px; max-width:800px; margin-left:auto; margin-right:auto;}
+
+    .events-container {padding:40px 0;}
+    .event-cards {display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:30px; margin-top:30px;}
+    .event-card {background:#fff; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.08); overflow:hidden; transition:0.3s;}
+    .event-card:hover {transform:translateY(-5px); box-shadow:0 10px 25px rgba(0,0,0,0.15);}
+    .event-card img {width:100%; height:200px; object-fit:cover;}
+    .event-card-content {padding:25px;}
+    .event-card-content h3 {margin-bottom:12px; color:#1f2937; font-size:20px;}
+    .event-meta {display:flex; align-items:center; margin:8px 0; color:#6b7280; font-size:14px;}
+    .event-meta i {margin-right:10px; color:#5b21b6; width:16px;}
+    .event-price {color:#5b21b6; font-weight:bold; margin:15px 0; font-size:18px;}
+    .event-card-content .btn {background:#5b21b6; color:#fff; border:none; padding:12px 20px; border-radius:6px; cursor:pointer; width:100%; font-weight:600; transition:background 0.3s;}
+    .event-card-content .btn:hover {background:#7c3aed;}
+    .event-card-content .btn-ghost {background:transparent; border:2px solid #5b21b6; color:#5b21b6;}
+    .event-card-content .btn-ghost:hover {background:#f5f3ff;}
+
+    /* How it works - Cards style */
+    .steps {display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; margin-top:40px;}
+    .step {background:#fff; padding:25px; border-radius:10px; text-align:center; box-shadow:0 5px 15px rgba(0,0,0,0.08); transition:0.3s;}
+    .step:hover {transform:translateY(-5px); box-shadow:0 10px 25px rgba(0,0,0,0.15);}
+    .step h3 {color:#5b21b6; margin-bottom:10px; font-size:20px;}
+    .step-icon {
+      font-size: 40px;
+      color: #5b21b6;
+      margin-bottom: 15px;
+    }
+
+
+    .cta {text-align:center; margin-top:40px;}
+    .cta button {margin:10px; padding:14px 30px; border:none; border-radius:50px; font-weight:bold; cursor:pointer; font-size:16px; transition:all 0.3s;}
+    .cta .purple {background:#5b21b6; color:#fff;}
+    .cta .purple:hover {background:#7c3aed;}
+    .cta .outline {background:transparent; border:2px solid #5b21b6; color:#5b21b6;}
+    .cta .outline:hover {background:#f5f3ff;}
+
+    /* Features Section */
+    .features-section {
+      padding: 70px 40px;
+      background-color: #f9fafb;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-top: 40px;
+    }
+    
+    .feature-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .feature-icon {
+      font-size: 40px;
+      color: #5b21b6;
+      margin-bottom: 20px;
+    }
+    
+    .feature-card h3 {
+      color: #5b21b6;
+      margin-bottom: 15px;
+      font-size: 22px;
+    }
+    
+    .feature-card p {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Host CTA Section */
+    .host-cta {
+      text-align: center;
+      padding: 80px 40px;
+      background: linear-gradient(rgba(91,33,182,0.9), rgba(91,33,182,0.9)), url('https://images.unsplash.com/photo-1519677100203-a0e668c92439') no-repeat center/cover;
+      color: #fff;
+    }
+    
+    .host-cta h2 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+    
+    .host-cta p {
+      max-width: 700px;
+      margin: 0 auto 30px;
+      font-size: 18px;
+    }
+    
+    .host-cta .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .host-cta .cta-button {
+      padding: 15px 30px;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .host-cta .primary {
+      background: #f97316;
+      color: #fff;
+      border: none;
+    }
+    
+    .host-cta .primary:hover {
+      background: #fb923c;
+    }
+    
+    .host-cta .secondary {
+      background: transparent;
+      color: #fff;
+      border: 2px solid #fff;
+    }
+    
+    .host-cta .secondary:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* Footer */
+    footer {background:#5b21b6; color:#fff; padding:60px 40px 30px;}
+    footer .grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:30px;}
+    footer h3 {font-size:24px; margin-bottom:15px;}
+    footer h4 {font-size:18px; margin-bottom:15px;}
+    footer a {color:#fff; text-decoration:none; display:block; margin-bottom:10px; opacity:0.9; transition:opacity 0.3s;}
+    footer a:hover {opacity:1; text-decoration:underline;}
+    footer p {margin-bottom:10px; opacity:0.9;}
+
+    /* Responsive styles */
+    @media (max-width: 1024px) {
+      header {padding:15px 20px;}
+      .hero h1 {font-size:36px;}
+      section {padding:60px 20px;}
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      header {padding:15px;}
+      
+      .menu-toggle {
+        display: flex;
+      }
+      
+      header nav {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 80%;
+        height: 100vh;
+        background: #fff;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 80px 20px 20px;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+        transition: left 0.3s ease;
+        z-index: 999;
+        overflow-y: auto;
+      }
+      
+      header nav.active {
+        left: 0;
+      }
+      
+      header nav a {
+        margin: 15px 0;
+        font-size: 18px;
+        width: 100%;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      
+      header .auth {
+        display: none;
+      }
+      
+      .mobile-auth {
+        display: flex;
+      }
+      
+      .hero {
+        margin-top: 0;
+        height: auto;
+        padding: 100px 20px 80px;
+      }
+      
+      .search-box {
+        flex-direction: column;
+        border-radius: 12px;
+      }
+      
+      .search-box input {
+        border-radius: 12px;
+        margin-bottom: 10px;
+      }
+      
+      .search-box button {
+        border-radius: 12px;
+      }
+      
+      .event-cards, .steps {
+        grid-template-columns: 1fr;
+      }
+      
+      .host-cta .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .hero h1 {font-size:28px;}
+      section h2 {font-size:26px;}
+      
+      header {
+        padding: 10px;
+      }
+      
+      .logo span {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header>
+    <div class="logo">
+      <div class="logo-img">
+        <img src="Logo.png" alt="Logo" style="width:40px; height: 35px;">
+      </div>
+      <span>TalentConnect</span>
+    </div>
+    
+    <div class="menu-toggle" id="menuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    
+    <nav id="mainNav">
+      <a href="Index.html">Home</a>
+      <a href="browseevent.html">Browse Events</a>
+      <a href="aboutus.html">About Us</a>
+      <a href="Contactus.html">Contact</a>
+      <a href="host_event.html" style="color: #f97316; font-weight: bold;">Host Your Event</a>
+      
+    </nav>
+    
+    <div class="auth">
+  <button class="login" onclick="location.href='login.html'">Login</button>
+  <button class="signup" onclick="location.href='login.html'">Sign Up</button>
+</div>
+  </header>
+
+  <section class="hero">
+    <h1>Plan Your Event, <span>Hassle Free</span></h1>
+    <p>Connect with verified event organizers, entertainers, and artists in your area.</p>
+    <div class="search-box">
+      <input type="text" placeholder="Location">
+      <button>Find Events</button>
+    </div>
+  </section>
+
+  <section class="events-container">
+    <h2>Trending <span>Events</span></h2>
+    <p class="section-desc">Hot events happening right now. Don't miss out!</p>
+    
+    <div class="event-cards">
+      <div class="event-card">
+        <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=2069&auto=format&fit=crop" alt="DJ Party">
+        <div class="event-card-content">
+          <h3>Saturday Night DJ Party</h3>
+          <div class="event-meta">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Sat, Oct 15 • 9:00 PM</span>
+          </div>
+          <div class="event-meta">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Club Oxygen, Sector 26, Chandigarh</span>
+          </div>
+          <p>Featuring top DJs from Delhi and Mumbai with special effects and light show.</p>
+          <div class="event-price">₹ 1,499 onwards</div>
+          <button class="btn">Book Tickets</button>
+        </div>
+      </div>
+      
+      <div class="event-card">
+        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2070&auto=format&fit=crop" alt="Wellness Retreat">
+        <div class="event-card-content">
+          <h3>Wellness Retreat</h3>
+          <div class="event-meta">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Sun, Oct 16 • 7:00 AM</span>
+          </div>
+          <div class="event-meta">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Sukhna Lake, Chandigarh</span>
+          </div>
+          <p>Rejuvenate your mind and body with expert yoga instructors.</p>
+          <div class="event-price">₹ 999 onwards</div>
+          <button class="btn">Book Tickets</button>
+        </div>
+      </div>
+      
+      <div class="event-card">
+        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop" alt="Tech Conference">
+        <div class="event-card-content">
+          <h3>Tech Innovation Summit</h3>
+          <div class="event-meta">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Fri, Oct 21 • 9:00 AM</span>
+          </div>
+          <div class="event-meta">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Convention Center, Sector 34, Chandigarh</span>
+          </div>
+          <p>Explore the latest in technology and innovation with industry leaders.</p>
+          <div class="event-price">₹ 2,499 onwards</div>
+          <button class="btn">Book Tickets</button>
+        </div>
+      </div>
+      
+      <div class="event-card">
+        <img src="https://images.lifestyleasia.com/wp-content/uploads/sites/7/2024/10/03134848/pexels-djvvadi-17264037-1350x900.jpg" alt="Dandiya Night">
+        <div class="event-card-content">
+          <h3>Navratri Dandiya Night</h3>
+          <div class="event-meta">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Sat, Oct 28 • 7:00 PM</span>
+          </div>
+          <div class="event-meta">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Fair Ground Sector 34, Chandigarh</span>
+          </div>
+          <p>Experience the joy of traditional Gujarati dance with live music and delicious food.</p>
+          <div class="event-price">₹ 799 onwards</div>
+          <button class="btn">Book Tickets</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="cta">
+      <button class="purple">Browse All Events</button>
+    </div>
+  </section>
+
+  <!-- Upcoming Events -->
+  <section class="events-container" style="background-color: #f9fafb;">
+    <h2>Upcoming <span>Events</span></h2>
+    <p class="section-desc">Mark your calendars for these exciting events!</p>
+    
+    <div class="event-cards">
+      <div class="event-card">
+        <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2069&auto=format&fit=crop" alt="Food Festival">
+        <div class="event-card-content">
+          <h3>Food Festival</h3>
+          <div class="event-meta">
+            <i class="fas fa-calendar-alt"></i>
+            <span>November 2023</span>
+          </div>
+          <div class="event-meta">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Leisure Valley, Sector 10, Chandigarh</span>
+          </div>
+          <p>Taste delicacies from around the world with live cooking demonstrations.</p>
+          <button class="btn btn-ghost">Coming Soon</button>
+        </div>
+      </div>
+      
+      <div class="event-card">
+        <img src="https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?q=80&w=2070&auto=format&fit=crop" alt="Comedy Show">
+        <div class="event-card-content">
+          <h3>Stand-up Comedy Night</h3>
+          <div class="event-meta">
+            <i class="fas fa-calendar-alt"></i>
+            <span>December 2023</span>
+          </div>
+          <div class="event-meta">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Tagore Theatre, Sector 18, Chandigarh</span>
+          </div>
+          <p>Laugh out loud with India's top comedians in this special performance.</p>
+          <button class="btn btn-ghost">Coming Soon</button>
+        </div>
+      </div>
+      
+      <div class="event-card">
+        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=2070&auto=format&fit=crop" alt="Live Concert">
+        <div class="event-card-content">
+          <h3>Live Music Festival</h3>
+          <div class="event-meta">
+            <i class="fas fa-calendar-alt"></i>
+            <span>January 2024</span>
+          </div>
+          <div class="event-meta">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Rock Garden, Sector 1, Chandigarh</span>
+          </div>
+          <p>Experience an electrifying night with top artists and bands from across the country.</p>
+          <button class="btn btn-ghost">Coming Soon</button>
+        </div>
+      </div>
+      
+      <div class="event-card">
+        <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=2070&auto=format&fit=crop" alt="Art Exhibition">
+        <div class="event-card-content">
+          <h3>Modern Art Exhibition</h3>
+          <div class="event-meta">
+            <i class="fas fa-calendar-alt"></i>
+            <span>February 2024</span>
+          </div>
+          <div class="event-meta">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Government Museum, Sector 10, Chandigarh</span>
+          </div>
+          <p>Explore contemporary art from emerging Indian artists.</p>
+          <button class="btn btn-ghost">Coming Soon</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="cta">
+      <button class="purple">Browse All Events</button>
+    </div>
+  </section>
+
+  <!-- Features Section (from screenshot) -->
+  <section class="features-section">
+    <h2>Everything You Need to Host & Discover <span>Events</span></h2>
+    <p class="section-desc">Whether you're hosting a concert or looking for your next adventure, we've got you covered with powerful tools and seamless experiences.</p>
+    
+    <div class="features-grid">
+      <!-- First row of 3 features -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-calendar-plus"></i>
+        </div>
+        <h3>Easy Event Creation</h3>
+        <p>Create and publish your event in minutes with our intuitive event builder.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-bullhorn"></i>
+        </div>
+        <h3>Built-in Promotion</h3>
+        <p>Your events get promoted to the right audience automatically.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <h3>Reach Your Audience</h3>
+        <p>Connect with thousands of potential attendees in your local community.</p>
+      </div>
+      
+      <!-- Second row of 3 features -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3>Booking Protection</h3>
+        <p>Both hosts and attendees are protected with our booking guarantee.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-credit-card"></i>
+        </div>
+        <h3>Secure Payments</h3>
+        <p>We handle all payments securely, so you can focus on your event.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-bolt"></i>
+        </div>
+        <h3>Instant Bookings</h3>
+        <p>Customers can book and pay instantly with just a few clicks.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Host CTA Section (from screenshot) -->
+  <section class="host-cta">
+    <h2>Ready to Host Your Event?</h2>
+    <p>Join thousands of event hosts who trust EventHub to manage their bookings, payments, and audience engagement.</p>
+    <div class="cta-buttons">
+      <button class="cta-button primary">Start Hosting Today</button>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section style="background-color: #f9fafb;">
+    <h2>How <span>It Works</span></h2>
+    <p class="section-desc">Simple steps to find and book the perfect event for you</p>
+    
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <h3>1. Search</h3>
+        <p>Browse events by location, date, and category to find what interests you.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>2. Select</h3>
+        <p>Choose from a variety of events that match your preferences and budget.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <i class="fas fa-credit-card"></i>
+        </div>
+        <h3>3. Book & Pay</h3>
+        <p>Secure your spot with our trusted payment system.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">
+          <i class="fas fa-smile"></i>
+        </div>
+        <h3>4. Enjoy</h3>
+        <p>Attend the event and create unforgettable memories.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="grid">
+      <div>
+        <h3>TalentConnect</h3>
+        <p>Where talent meets opportunity</p>
+      </div>
+      <div>
+        <h4>For Event Hosts</h4>
+        <a href="#">Create an Event</a>
+        <a href="#">Getting Started Guide</a>
+        <a href="#">Pricing</a>
+       
+      </div>
+      <div>
+        <h4>For Attendees</h4>
+        <a href="#">Browse Events</a>
+        
+        <a href="#">My Tickets</a>
+        <a href="#">Event Calendar</a>
+      
+      </div>
+      <div>
+        <h4>Support</h4>
+       
+        <a href="#">Contact Us</a>
+      
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top:40px; opacity:0.7;">© 2025 TalentConnect. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
