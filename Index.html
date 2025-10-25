@@ -105,6 +105,174 @@
       box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
     }
 
+    /* Profile Dropdown Styles */
+    .profile-section {
+      position: relative;
+      display: none;
+    }
+
+    .profile-section.active {
+      display: block;
+    }
+
+    .profile-trigger {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 15px;
+      background: #f5f3ff;
+      border: 2px solid #5b21b6;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .profile-trigger:hover {
+      background: #5b21b6;
+    }
+
+    .profile-trigger:hover .profile-name {
+      color: white;
+    }
+
+    .profile-trigger:hover .profile-avatar {
+      border-color: white;
+    }
+
+    .profile-trigger:hover .chevron-icon {
+      color: white;
+    }
+
+    .profile-avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #5b21b6, #f97316);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      border: 2px solid #5b21b6;
+      transition: all 0.3s ease;
+    }
+
+    .profile-name {
+      font-weight: 600;
+      color: #5b21b6;
+      transition: color 0.3s ease;
+    }
+
+    .chevron-icon {
+      font-size: 12px;
+      color: #5b21b6;
+      transition: color 0.3s ease;
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: 60px;
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      min-width: 280px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+
+    .profile-dropdown.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .profile-dropdown-header {
+      padding: 20px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile-dropdown-header .profile-avatar {
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+    }
+
+    .profile-info h4 {
+      margin: 0;
+      color: #1f2937;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .profile-info p {
+      margin: 5px 0 0 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .profile-dropdown-menu {
+      padding: 10px 0;
+    }
+
+    .profile-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      color: #333;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .profile-menu-item:hover {
+      background: #f5f3ff;
+      color: #5b21b6;
+    }
+
+    .profile-menu-item i {
+      width: 20px;
+      font-size: 16px;
+      color: #5b21b6;
+    }
+
+    .profile-menu-divider {
+      height: 1px;
+      background: #f0f0f0;
+      margin: 10px 0;
+    }
+
+    .profile-menu-item.logout {
+      color: #ef4444;
+    }
+
+    .profile-menu-item.logout:hover {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    .profile-menu-item.logout i {
+      color: #ef4444;
+    }
+
+    .notification-badge {
+      background: #ef4444;
+      color: white;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-weight: 600;
+      margin-left: auto;
+    }
+
     .mobile-auth {
       display: none;
       flex-direction: column;
@@ -386,6 +554,10 @@
         display: none;
       }
       
+      .profile-section {
+        display: none !important;
+      }
+      
       .mobile-auth {
         display: flex;
       }
@@ -465,9 +637,87 @@
       </div>
     </nav>
     
-    <div class="auth">
+    <div class="auth" id="authButtons">
       <button class="login" onclick="handleLogin()">Login</button>
       <button class="signup" onclick="handleSignup()">Sign Up</button>
+    </div>
+
+    <!-- Profile Section (Shows after login) -->
+    <div class="profile-section" id="profileSection">
+      <div class="profile-trigger" onclick="toggleProfileDropdown()">
+        <div class="profile-avatar" id="profileAvatar">JD</div>
+        <span class="profile-name" id="profileName">John Doe</span>
+        <i class="fas fa-chevron-down chevron-icon"></i>
+      </div>
+      
+      <div class="profile-dropdown" id="profileDropdown">
+        <div class="profile-dropdown-header">
+          <div class="profile-avatar" id="dropdownAvatar">JD</div>
+          <div class="profile-info">
+            <h4 id="dropdownName">John Doe</h4>
+            <p id="dropdownEmail">john.doe@example.com</p>
+          </div>
+        </div>
+        
+        <div class="profile-dropdown-menu">
+          <a href="#" class="profile-menu-item" onclick="navigateTo('profile')">
+            <i class="fas fa-user"></i>
+            <span>Manage Profile</span>
+          </a>
+          
+          <a href="#" class="profile-menu-item" onclick="navigateTo('bookings')">
+            <i class="fas fa-ticket-alt"></i>
+            <span>My Bookings</span>
+            <span class="notification-badge">3</span>
+          </a>
+          
+          <a href="#" class="profile-menu-item" onclick="navigateTo('history')">
+            <i class="fas fa-history"></i>
+            <span>Event History</span>
+          </a>
+          
+          <a href="#" class="profile-menu-item" onclick="navigateTo('favorites')">
+            <i class="fas fa-heart"></i>
+            <span>Saved Events</span>
+          </a>
+          
+          <a href="#" class="profile-menu-item" onclick="navigateTo('payments')">
+            <i class="fas fa-receipt"></i>
+            <span>Payment Receipts</span>
+          </a>
+          
+          <div class="profile-menu-divider"></div>
+          
+          <a href="#" class="profile-menu-item" onclick="navigateTo('hosted-events')">
+            <i class="fas fa-calendar-plus"></i>
+            <span>My Hosted Events</span>
+          </a>
+          
+          <a href="#" class="profile-menu-item" onclick="navigateTo('analytics')">
+            <i class="fas fa-chart-line"></i>
+            <span>Analytics</span>
+          </a>
+          
+          <div class="profile-menu-divider"></div>
+          
+          <a href="#" class="profile-menu-item" onclick="navigateTo('settings')">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+          
+          <a href="#" class="profile-menu-item" onclick="navigateTo('help')">
+            <i class="fas fa-question-circle"></i>
+            <span>Help & Support</span>
+          </a>
+          
+          <div class="profile-menu-divider"></div>
+          
+          <a href="#" class="profile-menu-item logout" onclick="handleLogout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </a>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -727,6 +977,12 @@
     };
 
     let currentFilter = 'all';
+    let isLoggedIn = false;
+    let userData = {
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      initials: 'JD'
+    };
 
     // Mobile menu toggle
     const menuToggle = document.getElementById('menuToggle');
@@ -837,7 +1093,7 @@
 
         if (results.length > 0) {
           showNotification(`Found ${results.length} event(s) matching your search!`, 'success');
-          scrollToSection(event, 'trendingEvents');
+          document.getElementById('trendingEvents').scrollIntoView({ behavior: 'smooth' });
         } else {
           showNotification('No events found. Try a different search term.', 'error');
         }
@@ -846,6 +1102,14 @@
 
     // Book event
     function bookEvent(eventId, eventTitle) {
+      if (!isLoggedIn) {
+        showNotification('Please login to book events!', 'error');
+        setTimeout(() => {
+          handleLogin();
+        }, 1500);
+        return;
+      }
+      
       showNotification(`Booking initiated for "${eventTitle}"! Redirecting to payment...`, 'success');
       
       // Simulate booking process
@@ -865,26 +1129,115 @@
       }, 1000);
     }
 
-    // Handle login
+    // Handle login - Redirect to your login page
     function handleLogin() {
-      showNotification('Redirecting to login page...', 'success');
-      setTimeout(() => {
-        console.log('Navigate to login page');
-        // window.location.href = 'login.html';
-      }, 1000);
+      // Store the return URL so user comes back here after login
+      localStorage.setItem('talentconnect_return_url', window.location.href);
+      window.location.href = 'login.html'; // Change this to your actual login page URL
     }
 
-    // Handle signup
+    // Handle signup - Redirect to your signup page
     function handleSignup() {
-      showNotification('Redirecting to signup page...', 'success');
+      // Store the return URL so user comes back here after signup
+      localStorage.setItem('talentconnect_return_url', window.location.href);
+      window.location.href = 'login.html'; // Change this to your actual signup page URL
+    }
+
+    // Update UI after login
+    function updateUIAfterLogin() {
+      // Hide login/signup buttons
+      document.getElementById('authButtons').style.display = 'none';
+      
+      // Show profile section
+      const profileSection = document.getElementById('profileSection');
+      profileSection.classList.add('active');
+      
+      // Update profile info
+      document.getElementById('profileName').textContent = userData.name;
+      document.getElementById('profileAvatar').textContent = userData.initials;
+      document.getElementById('dropdownName').textContent = userData.name;
+      document.getElementById('dropdownEmail').textContent = userData.email;
+      document.getElementById('dropdownAvatar').textContent = userData.initials;
+      
+      // Show welcome notification
+      showNotification(`Welcome back, ${userData.name.split(' ')[0]}!`, 'success');
+    }
+
+    // Toggle profile dropdown
+    function toggleProfileDropdown() {
+      const dropdown = document.getElementById('profileDropdown');
+      dropdown.classList.toggle('show');
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const profileSection = document.getElementById('profileSection');
+      const dropdown = document.getElementById('profileDropdown');
+      
+      if (profileSection && !profileSection.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+
+    // Navigate to different sections
+    function navigateTo(section) {
+      const dropdown = document.getElementById('profileDropdown');
+      dropdown.classList.remove('show');
+      
+      const sectionTitles = {
+        'profile': 'Manage Profile',
+        'bookings': 'My Bookings',
+        'history': 'Event History',
+        'favorites': 'Saved Events',
+        'payments': 'Payment Receipts',
+        'hosted-events': 'My Hosted Events',
+        'analytics': 'Analytics Dashboard',
+        'settings': 'Account Settings',
+        'help': 'Help & Support'
+      };
+      
+      showNotification(`Opening ${sectionTitles[section]}...`, 'success');
+      
       setTimeout(() => {
-        console.log('Navigate to signup page');
-        // window.location.href = 'login.html';
-      }, 1000);
+        console.log(`Navigate to ${section} page`);
+        // In a real app: window.location.href = `/${section}`;
+      }, 500);
+    }
+
+    // Handle logout
+    function handleLogout() {
+      const dropdown = document.getElementById('profileDropdown');
+      dropdown.classList.remove('show');
+      
+      showNotification('Logging out...', 'success');
+      
+      setTimeout(() => {
+        isLoggedIn = false;
+        
+        // Clear localStorage
+        localStorage.removeItem('talentconnect_user');
+        
+        // Show login/signup buttons
+        document.getElementById('authButtons').style.display = 'flex';
+        
+        // Hide profile section
+        const profileSection = document.getElementById('profileSection');
+        profileSection.classList.remove('active');
+        
+        showNotification('Logged out successfully!', 'success');
+      }, 800);
     }
 
     // Handle host event
     function handleHostEvent() {
+      if (!isLoggedIn) {
+        showNotification('Please login to host events!', 'error');
+        setTimeout(() => {
+          handleLogin();
+        }, 1500);
+        return;
+      }
+      
       showNotification('Opening event hosting portal...', 'success');
       setTimeout(() => {
         console.log('Navigate to host event page');
@@ -934,9 +1287,39 @@
       });
     }
 
+    // Check login status from localStorage
+    function checkLoginStatus() {
+      const userDataString = localStorage.getItem('talentconnect_user');
+      
+      if (userDataString) {
+        try {
+          const savedUserData = JSON.parse(userDataString);
+          
+          if (savedUserData.isLoggedIn) {
+            // User is logged in
+            isLoggedIn = true;
+            userData = {
+              name: savedUserData.name,
+              email: savedUserData.email,
+              initials: savedUserData.initials
+            };
+            
+            updateUIAfterLogin();
+            console.log('User logged in:', userData.name);
+          }
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          localStorage.removeItem('talentconnect_user');
+        }
+      }
+    }
+
     // Initialize on page load
     window.addEventListener('DOMContentLoaded', async () => {
       console.log('TalentConnect Platform Initialized');
+      
+      // Check if user is logged in
+      checkLoginStatus();
       
       // Show loading state
       const trendingContainer = document.getElementById('trendingEventCards');
