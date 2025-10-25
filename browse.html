@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TalentConnect — Browse Events</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Reset */
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+    body {background:#fff; color:#333; line-height:1.6;}
+
+    /* Navbar */
+    header {
+      position:fixed; top:0; left:0; width:100%;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:15px 40px; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,0.1);
+      z-index:1000;
+    }
+    header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size:22px; font-weight:bold; color:#5b21b6;
+    }
+    header .logo-img {
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    header nav {display:flex; align-items:center;}
+    header nav a {margin:0 15px; text-decoration:none; color:#333; font-weight:500; white-space: nowrap;}
+    header nav a:hover {color:#f97316;}
+    
+    /* Mobile menu button */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 30px;
+      height: 25px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+    
+    .menu-toggle span {
+      width: 100%;
+      height: 3px;
+      background-color: #333;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+    
+    /* Auth buttons with hover effects */
+    header .auth {display:flex; align-items:center; gap: 15px;}
+    header .auth button {
+      padding:10px 20px; 
+      border:none; 
+      border-radius:50px; 
+      cursor:pointer; 
+      font-weight:600;
+      font-size:16px;
+      transition: all 0.3s ease;
+    }
+    
+    header .auth .login {
+      background: transparent;
+      color: #5b21b6;
+      border: 2px solid #5b21b6;
+    }
+    
+    header .auth .login:hover {
+      background: #5b21b6;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(91, 33, 182, 0.3);
+    }
+    
+    header .auth .signup {
+      background: #f97316;
+      color: white;
+      border: 2px solid #f97316;
+    }
+    
+    header .auth .signup:hover {
+      background: #ff8c3f;
+      border-color: #ff8c3f;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
+    }
+
+    /* Mobile menu styles */
+    .mobile-auth {
+      display: none;
+      flex-direction: column;
+      gap: 15px;
+      padding: 20px;
+      width: 100%;
+    }
+    
+    .mobile-auth button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    
+    .mobile-auth .login {
+      background: transparent;
+      color: #5b21b6;
+      border: 2px solid #5b21b6;
+    }
+    
+    .mobile-auth .signup {
+      background: #f97316;
+      color: white;
+      border: 2px solid #f97316;
+    }
+
+    /* Page Header */
+    .page-header {
+      background:linear-gradient(rgba(91,33,182,0.85),rgba(91,33,182,0.85)), url('https://images.unsplash.com/photo-1542038784456-1ea8e935640e') no-repeat center/cover;
+      height:40vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; color:#fff; padding:0 20px; margin-top:70px;
+    }
+    .page-header h1 {font-size:42px; font-weight:800; margin-bottom:15px;}
+    .page-header h1 span {color:#f97316;}
+    .page-header p {margin:20px 0; font-size:18px; max-width:700px;}
+    
+    /* Filters Section */
+    .filters-section {
+      padding: 30px 40px;
+      background: #f9fafb;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .filters-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .filter-group {
+      margin-bottom: 15px;
+    }
+    
+    .filter-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #4b5563;
+    }
+    
+    .filter-group select,
+    .filter-group input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 16px;
+      background: white;
+    }
+    
+    .filter-actions {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 15px;
+    }
+    
+    .filter-actions button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    .filter-actions .apply-btn {
+      background: #5b21b6;
+      color: white;
+    }
+    
+    .filter-actions .apply-btn:hover {
+      background: #7c3aed;
+    }
+    
+    .filter-actions .reset-btn {
+      background: #f3f4f6;
+      color: #4b5563;
+      border: 1px solid #d1d5db;
+    }
+    
+    .filter-actions .reset-btn:hover {
+      background: #e5e7eb;
+    }
+    
+    /* Events Grid */
+    .events-grid-section {
+      padding: 40px;
+    }
+    
+    .events-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .events-header h2 {
+      font-size: 28px;
+      color: #1f2937;
+    }
+    
+    .events-header h2 span {
+      color: #5b21b6;
+    }
+    
+    .sort-options {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .sort-options select {
+      padding: 10px 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+    }
+    
+    .event-card {background:#fff; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.08); overflow:hidden; transition:0.3s;}
+    .event-card:hover {transform:translateY(-5px); box-shadow:0 10px 25px rgba(0,0,0,0.15);}
+    .event-card img {width:100%; height:200px; object-fit:cover;}
+    .event-card-content {padding:25px;}
+    .event-card-content h3 {margin-bottom:12px; color:#1f2937; font-size:20px;}
+    .event-meta {display:flex; align-items:center; margin:8px 0; color:#6b7280; font-size:14px;}
+    .event-meta i {margin-right:10px; color:#5b21b6; width:16px;}
+    .event-price {color:#5b21b6; font-weight:bold; margin:15px 0; font-size:18px;}
+    .event-card-content .btn {background:#5b21b6; color:#fff; border:none; padding:12px 20px; border-radius:6px; cursor:pointer; width:100%; font-weight:600; transition:background 0.3s;}
+    .event-card-content .btn:hover {background:#7c3aed;}
+    .event-card-content .btn-ghost {background:transparent; border:2px solid #5b21b6; color:#5b21b6;}
+    .event-card-content .btn-ghost:hover {background:#f5f3ff;}
+    
+    /* No results message */
+    .no-results {
+      text-align: center;
+      padding: 60px 20px;
+      grid-column: 1 / -1;
+    }
+    
+    .no-results i {
+      font-size: 60px;
+      color: #d1d5db;
+      margin-bottom: 20px;
+    }
+    
+    .no-results h3 {
+      font-size: 24px;
+      color: #6b7280;
+      margin-bottom: 15px;
+    }
+    
+    .no-results p {
+      color: #9ca3af;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 50px;
+      gap: 10px;
+    }
+    
+    .pagination button {
+      padding: 10px 18px;
+      border: 1px solid #d1d5db;
+      background: white;
+      color: #4b5563;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    
+    .pagination button:hover {
+      background: #f3f4f6;
+    }
+    
+    .pagination button.active {
+      background: #5b21b6;
+      color: white;
+      border-color: #5b21b6;
+    }
+    
+    /* Footer */
+    footer {background:#5b21b6; color:#fff; padding:60px 40px 30px;}
+    footer .grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:30px;}
+    footer h3 {font-size:24px; margin-bottom:15px;}
+    footer h4 {font-size:18px; margin-bottom:15px;}
+    footer a {color:#fff; text-decoration:none; display:block; margin-bottom:10px; opacity:0.9; transition:opacity 0.3s;}
+    footer a:hover {opacity:1; text-decoration:underline;}
+    footer p {margin-bottom:10px; opacity:0.9;}
+
+    /* Responsive styles */
+    @media (max-width: 1024px) {
+      header {padding:15px 20px;}
+      .page-header h1 {font-size:36px;}
+      .filters-section, .events-grid-section {padding:30px 20px;}
+    }
+    
+    @media (max-width: 768px) {
+      header {padding:15px;}
+      
+      .menu-toggle {
+        display: flex;
+      }
+      
+      header nav {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 80%;
+        height: 100vh;
+        background: #fff;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 80px 20px 20px;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+        transition: left 0.3s ease;
+        z-index: 999;
+        overflow-y: auto;
+      }
+      
+      header nav.active {
+        left: 0;
+      }
+      
+      header nav a {
+        margin: 15px 0;
+        font-size: 18px;
+        width: 100%;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      
+      header .auth {
+        display: none;
+      }
+      
+      .mobile-auth {
+        display: flex;
+      }
+      
+      .page-header {
+        margin-top: 0;
+        height: auto;
+        padding: 100px 20px 60px;
+      }
+      
+      .filters-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .events-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .events-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .page-header h1 {font-size:28px;}
+      
+      header {
+        padding: 10px;
+      }
+      
+      .logo span {
+        font-size: 18px;
+      }
+      
+      .filters-section, .events-grid-section {
+        padding: 20px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header>
+    <div class="logo">
+      <div class="logo-img">
+        <img src="Logo.png" alt="Logo" style="width:35px; height: 35px;">
+      </div>
+      <span>TalentConnect</span>
+    </div>
+    
+    <div class="menu-toggle" id="menuToggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    
+    <nav id="mainNav">
+      <a href="Index.html">Home</a>
+      <a href="#" style="color: #f97316; font-weight: bold;">Browse Events</a>
+      <a href="aboutus.html">About Us</a>
+      <a href="Contactus.html">Contact</a>
+      <a href="#">Host Your Event</a>
+      
+      <div class="mobile-auth">
+        <button class="login" onclick="location.href='login.html'">Login</button>
+        <button class="signup" onclick="location.href='login.html'">Sign Up</button>
+      </div>
+    </nav>
+    
+    <div class="auth">
+      <button class="login" onclick="location.href='login.html'">Login</button>
+      <button class="signup" onclick="location.href='login.html'">Sign Up</button>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <h1>Discover Amazing <span>Events</span></h1>
+    <p>Find events that match your interests and preferences</p>
+  </section>
+
+  <!-- Filters Section -->
+  <section class="filters-section">
+    <div class="filters-container">
+      <div class="filter-group">
+        <label for="category">Category</label>
+        <select id="category">
+          <option value="">All Categories</option>
+          <option value="music">Music</option>
+          <option value="sports">Sports</option>
+          <option value="arts">Arts & Culture</option>
+          <option value="food">Food & Drink</option>
+          <option value="conference">Conferences</option>
+          <option value="workshop">Workshops</option>
+          <option value="comedy">Comedy</option>
+          <option value="wellness">Wellness</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="date">Date</label>
+        <select id="date">
+          <option value="">Any Date</option>
+          <option value="today">Today</option>
+          <option value="tomorrow">Tomorrow</option>
+          <option value="this-week">This Week</option>
+          <option value="this-weekend">This Weekend</option>
+          <option value="next-week">Next Week</option>
+          <option value="this-month">This Month</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="location">Location</label>
+        <input type="text" id="location" placeholder="City or venue">
+      </div>
+      
+      <div class="filter-group">
+        <label for="price">Price Range</label>
+        <select id="price">
+          <option value="">Any Price</option>
+          <option value="free">Free</option>
+          <option value="under-500">Under ₹500</option>
+          <option value="500-1000">₹500 - ₹1000</option>
+          <option value="1000-2000">₹1000 - ₹2000</option>
+          <option value="2000+">Over ₹2000</option>
+        </select>
+      </div>
+      
+      <div class="filter-actions">
+        <button class="apply-btn" id="applyFilters">Apply Filters</button>
+        <button class="reset-btn" id="resetFilters">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Events Grid -->
+  <section class="events-grid-section">
+    <div class="events-header">
+      <h2>All <span>Events</span> (<span id="events-count">24</span>)</h2>
+      
+      <div class="sort-options">
+        <label for="sort">Sort by:</label>
+        <select id="sort">
+          <option value="date">Date (Soonest First)</option>
+          <option value="popularity">Popularity</option>
+          <option value="price-low">Price (Low to High)</option>
+          <option value="price-high">Price (High to Low)</option>
+          <option value="name">Name (A-Z)</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="events-grid" id="events-container">
+      <!-- Event cards will be dynamically populated here -->
+    </div>
+    
+    <!-- Pagination -->
+    <div class="pagination">
+      <button disabled>Previous</button>
+      <button class="active">1</button>
+      <button>2</button>
+      <button>3</button>
+      <button>Next</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="grid">
+      <div>
+        <h3>TalentConnect</h3>
+        <p>Where talent meets opportunity</p>
+      </div>
+      <div>
+        <h4>For Event Hosts</h4>
+        <a href="#">Create an Event</a>
+        <a href="#">Getting Started Guide</a>
+        <a href="#">Pricing</a>
+       
+      </div>
+      <div>
+        <h4>For Attendees</h4>
+        <a href="#">Browse Events</a>
+        
+        <a href="#">My Tickets</a>
+        <a href="#">Event Calendar</a>
+      
+      </div>
+      <div>
+        <h4>Support</h4>
+       
+        <a href="#">Contact Us</a>
+      
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top:40px; opacity:0.7;">© 2025 TalentConnect. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Event data
+    const events = [
+      {
+        id: 1,
+        title: "Saturday Night DJ Party",
+        image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=2069&auto=format&fit=crop",
+        date: "Sat, Oct 15 • 9:00 PM",
+        location: "Club Oxygen, Sector 26, Chandigarh",
+        description: "Featuring top DJs from Delhi and Mumbai with special effects and light show.",
+        price: 1499,
+        category: "music",
+        status: "active"
+      },
+      {
+        id: 2,
+        title: "Wellness Retreat",
+        image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2070&auto=format&fit=crop",
+        date: "Sun, Oct 16 • 7:00 AM",
+        location: "Sukhna Lake, Chandigarh",
+        description: "Rejuvenate your mind and body with expert yoga instructors.",
+        price: 999,
+        category: "wellness",
+        status: "active"
+      },
+      {
+        id: 3,
+        title: "Tech Innovation Summit",
+        image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop",
+        date: "Fri, Oct 21 • 9:00 AM",
+        location: "Convention Center, Sector 34, Chandigarh",
+        description: "Explore the latest in technology and innovation with industry leaders.",
+        price: 2499,
+        category: "conference",
+        status: "active"
+      },
+      {
+        id: 4,
+        title: "Navratri Dandiya Night",
+        image: "https://images.lifestyleasia.com/wp-content/uploads/sites/7/2024/10/03134848/pexels-djvvadi-17264037-1350x900.jpg",
+        date: "Sat, Oct 28 • 7:00 PM",
+        location: "Fair Ground Sector 34, Chandigarh",
+        description: "Experience the joy of traditional Gujarati dance with live music and delicious food.",
+        price: 799,
+        category: "music",
+        status: "active"
+      },
+      {
+        id: 5,
+        title: "Food Festival",
+        image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2069&auto=format&fit=crop",
+        date: "November 2023",
+        location: "Leisure Valley, Sector 10, Chandigarh",
+        description: "Taste delicacies from around the world with live cooking demonstrations.",
+        price: 0,
+        category: "food",
+        status: "upcoming"
+      },
+      {
+        id: 6,
+        title: "Stand-up Comedy Night",
+        image: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?q=80&w=2070&auto=format&fit=crop",
+        date: "December 2023",
+        location: "Tagore Theatre, Sector 18, Chandigarh",
+        description: "Laugh out loud with India's top comedians in this special performance.",
+        price: 599,
+        category: "comedy",
+        status: "upcoming"
+      },
+      {
+        id: 7,
+        title: "Live Music Festival",
+        image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=2070&auto=format&fit=crop",
+        date: "January 2024",
+        location: "Rock Garden, Sector 1, Chandigarh",
+        description: "Experience an electrifying night with top artists and bands from across the country.",
+        price: 1499,
+        category: "music",
+        status: "upcoming"
+      },
+      {
+        id: 8,
+        title: "Modern Art Exhibition",
+        image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=2070&auto=format&fit=crop",
+        date: "February 2024",
+        location: "Government Museum, Sector 10, Chandigarh",
+        description: "Explore contemporary art from emerging Indian artists.",
+        price: 299,
+        category: "arts",
+        status: "upcoming"
+      },
+      {
+        id: 9,
+        title: "Basketball Tournament",
+        image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=2090&auto=format&fit=crop",
+        date: "Sat, Nov 5 • 10:00 AM",
+        location: "Sports Complex, Sector 42, Chandigarh",
+        description: "Inter-college basketball championship with teams from across North India.",
+        price: 199,
+        category: "sports",
+        status: "active"
+      },
+      {
+        id: 10,
+        title: "Digital Marketing Workshop",
+        image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop",
+        date: "Sun, Nov 6 • 2:00 PM",
+        location: "Tech Hub, Sector 17, Chandigarh",
+        description: "Learn the latest digital marketing strategies from industry experts.",
+        price: 1299,
+        category: "workshop",
+        status: "active"
+      },
+      {
+        id: 11,
+        title: "Wine Tasting Evening",
+        image: "https://images.unsplash.com/photo-1559715745-e1b33a271c8f?q=80&w=2070&auto=format&fit=crop",
+        date: "Fri, Nov 11 • 6:00 PM",
+        location: "Vineyard Lounge, Sector 7, Chandigarh",
+        description: "Sample exquisite wines from around the world with expert sommeliers.",
+        price: 1599,
+        category: "food",
+        status: "active"
+      },
+      {
+        id: 12,
+        title: "Classical Music Concert",
+        image: "https://images.unsplash.com/photo-1509803874385-db7c23652552?q=80&w=2070&auto=format&fit=crop",
+        date: "Sun, Nov 20 • 7:00 PM",
+        location: "Tagore Theatre, Sector 18, Chandigarh",
+        description: "An evening of classical ragas by renowned Indian musicians.",
+        price: 899,
+        category: "music",
+        status: "active"
+      }
+    ];
+
+    // Toggle mobile menu
+    const menuToggle = document.getElementById('menuToggle');
+    const mainNav = document.getElementById('mainNav');
+    
+    menuToggle.addEventListener('click', function() {
+      mainNav.classList.toggle('active');
+      
+      // Animate hamburger icon
+      const spans = menuToggle.querySelectorAll('span');
+      if (mainNav.classList.contains('active')) {
+        spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+        spans[1].style.opacity = '0';
+        spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+      } else {
+        spans[0].style.transform = 'none';
+        spans[1].style.opacity = '1';
+        spans[2].style.transform = 'none';
+      }
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!menuToggle.contains(event.target) && !mainNav.contains(event.target)) {
+        mainNav.classList.remove('active');
+        
+        // Reset hamburger icon
+        const spans = menuToggle.querySelectorAll('span');
+        spans[0].style.transform = 'none';
+        spans[1].style.opacity = '1';
+        spans[2].style.transform = 'none';
+      }
+    });
+    
+    // Display events function
+    function displayEvents(eventsToShow) {
+      const eventsContainer = document.getElementById('events-container');
+      const eventsCount = document.getElementById('events-count');
+      
+      // Update events count
+      eventsCount.textContent = eventsToShow.length;
+      
+      // Clear current events
+      eventsContainer.innerHTML = '';
+      
+      // Show message if no events found
+      if (eventsToShow.length === 0) {
+        eventsContainer.innerHTML = `
+          <div class="no-results">
+            <i class="fas fa-search"></i>
+            <h3>No events found</h3>
+            <p>Try adjusting your filters to find more events.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Display events
+      eventsToShow.forEach(event => {
+        const eventCard = document.createElement('div');
+        eventCard.className = 'event-card';
+        eventCard.innerHTML = `
+          <img src="${event.image}" alt="${event.title}">
+          <div class="event-card-content">
+            <h3>${event.title}</h3>
+            <div class="event-meta">
+              <i class="fas fa-calendar-alt"></i>
+              <span>${event.date}</span>
+            </div>
+            <div class="event-meta">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>${event.location}</span>
+            </div>
+            <p>${event.description}</p>
+            <div class="event-price">${event.price === 0 ? 'Free' : '₹ ' + event.price + ' onwards'}</div>
+            <button class="btn ${event.status === 'upcoming' ? 'btn-ghost' : ''}">
+              ${event.status === 'upcoming' ? 'Coming Soon' : 'Book Tickets'}
+            </button>
+          </div>
+        `;
+        eventsContainer.appendChild(eventCard);
+      });
+    }
+    
+    // Filter events function
+    function filterEvents() {
+      const category = document.getElementById('category').value;
+      const dateFilter = document.getElementById('date').value;
+      const location = document.getElementById('location').value.toLowerCase();
+      const price = document.getElementById('price').value;
+      
+      const filteredEvents = events.filter(event => {
+        // Category filter
+        if (category && event.category !== category) return false;
+        
+        // Location filter
+        if (location && !event.location.toLowerCase().includes(location)) return false;
+        
+        // Price filter
+        if (price) {
+          if (price === 'free' && event.price !== 0) return false;
+          if (price === 'under-500' && (event.price === 0 || event.price > 500)) return false;
+          if (price === '500-1000' && (event.price < 500 || event.price > 1000)) return false;
+          if (price === '1000-2000' && (event.price < 1000 || event.price > 2000)) return false;
+          if (price === '2000+' && event.price < 2000) return false;
+        }
+        
+        // Date filter (simplified for demo)
+        if (dateFilter) {
+          // This is a simplified date filter for demonstration
+          // In a real application, you would compare actual dates
+          if (dateFilter === 'today' && !event.date.includes('Oct 15')) return false;
+          if (dateFilter === 'tomorrow' && !event.date.includes('Oct 16')) return false;
+          if (dateFilter === 'this-week' && !event.date.includes('Oct')) return false;
+        }
+        
+        return true;
+      });
+      
+      displayEvents(filteredEvents);
+    }
+    
+    // Reset filters function
+    function resetFilters() {
+      document.getElementById('category').value = '';
+      document.getElementById('date').value = '';
+      document.getElementById('location').value = '';
+      document.getElementById('price').value = '';
+      
+      displayEvents(events);
+    }
+    
+    // Sort events function
+    function sortEvents() {
+      const sortBy = document.getElementById('sort').value;
+      const eventsContainer = document.getElementById('events-container');
+      const eventCards = Array.from(eventsContainer.querySelectorAll('.event-card'));
+      
+      eventCards.sort((a, b) => {
+        const aPrice = parseInt(a.querySelector('.event-price').textContent.replace(/\D/g, '') || 0);
+        const bPrice = parseInt(b.querySelector('.event-price').textContent.replace(/\D/g, '') || 0);
+        const aTitle = a.querySelector('h3').textContent;
+        const bTitle = b.querySelector('h3').textContent;
+        
+        if (sortBy === 'price-low') return aPrice - bPrice;
+        if (sortBy === 'price-high') return bPrice - aPrice;
+        if (sortBy === 'name') return aTitle.localeCompare(bTitle);
+        
+        // Default sorting by date (simplified for demo)
+        return 0;
+      });
+      
+      // Clear and re-add sorted events
+      eventsContainer.innerHTML = '';
+      eventCards.forEach(card => eventsContainer.appendChild(card));
+    }
+    
+    // Initialize events on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      displayEvents(events);
+      
+      // Add event listeners
+      document.getElementById('applyFilters').addEventListener('click', filterEvents);
+      document.getElementById('resetFilters').addEventListener('click', resetFilters);
+      document.getElementById('sort').addEventListener('change', sortEvents);
+    });
+  </script>
+</body>
+</html>
