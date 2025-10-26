@@ -529,12 +529,9 @@
     </div>
     
     <!-- Pagination -->
+
     <div class="pagination">
-      <button disabled>Previous</button>
-      <button class="active">1</button>
-      <button>2</button>
-      <button>3</button>
-      <button>Next</button>
+      <!-- Pagination buttons will be dynamically generated -->
     </div>
   </section>
 
@@ -973,6 +970,10 @@
       }
     ];
 
+     // Pagination variables
+    let currentPage = 1;
+    const eventsPerPage = 12;
+    let filteredEvents = [...events];
     // Toggle mobile menu
     const menuToggle = document.getElementById('menuToggle');
     const mainNav = document.getElementById('mainNav');
@@ -1006,13 +1007,22 @@
       }
     });
     
-    // Display events function
+   // Display events function
     function displayEvents(eventsToShow) {
       const eventsContainer = document.getElementById('events-container');
       const eventsCount = document.getElementById('events-count');
       
+      // Store filtered events for pagination
+      filteredEvents = eventsToShow;
+      
       // Update events count
       eventsCount.textContent = eventsToShow.length;
+      
+      // Calculate pagination
+      const totalPages = Math.ceil(eventsToShow.length / eventsPerPage);
+      const startIndex = (currentPage - 1) * eventsPerPage;
+      const endIndex = startIndex + eventsPerPage;
+      const eventsToDisplay = eventsToShow.slice(startIndex, endIndex);
       
       // Clear current events
       eventsContainer.innerHTML = '';
@@ -1026,11 +1036,12 @@
             <p>Try adjusting your filters to find more events.</p>
           </div>
         `;
+        updatePagination(0);
         return;
       }
       
-      // Display events
-      eventsToShow.forEach(event => {
+      // Display events for current page
+      eventsToDisplay.forEach(event => {
         const eventCard = document.createElement('div');
         eventCard.className = 'event-card';
         eventCard.innerHTML = `
@@ -1054,6 +1065,58 @@
         `;
         eventsContainer.appendChild(eventCard);
       });
+      
+      // Update pagination buttons
+      updatePagination(totalPages);
+      
+      // Scroll to top of events section
+      document.querySelector('.events-grid-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    // Update pagination buttons
+    function updatePagination(totalPages) {
+      const paginationContainer = document.querySelector('.pagination');
+      paginationContainer.innerHTML = '';
+      
+      if (totalPages === 0) {
+        return;
+      }
+      
+      // Previous button
+      const prevButton = document.createElement('button');
+      prevButton.textContent = 'Previous';
+      prevButton.disabled = currentPage === 1;
+      prevButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          displayEvents(filteredEvents);
+        }
+      });
+      paginationContainer.appendChild(prevButton);
+      
+      // Page number buttons
+      for (let i = 1; i <= totalPages; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.textContent = i;
+        pageButton.className = i === currentPage ? 'active' : '';
+        pageButton.addEventListener('click', () => {
+          currentPage = i;
+          displayEvents(filteredEvents);
+        });
+        paginationContainer.appendChild(pageButton);
+      }
+      
+      // Next button
+      const nextButton = document.createElement('button');
+      nextButton.textContent = 'Next';
+      nextButton.disabled = currentPage === totalPages;
+      nextButton.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          displayEvents(filteredEvents);
+        }
+      });
+      paginationContainer.appendChild(nextButton);
     }
     
     // Filter events function
@@ -1063,7 +1126,7 @@
       const location = document.getElementById('location').value.toLowerCase();
       const price = document.getElementById('price').value;
       
-      const filteredEvents = events.filter(event => {
+      const filtered = events.filter(event => {
         // Category filter
         if (category && event.category !== category) return false;
         
@@ -1091,42 +1154,39 @@
         return true;
       });
       
-      displayEvents(filteredEvents);
+      currentPage = 1;
+      displayEvents(filtered);
     }
     
-    // Reset filters function
-    function resetFilters() {
+function resetFilters() {
       document.getElementById('category').value = '';
       document.getElementById('date').value = '';
       document.getElementById('location').value = '';
       document.getElementById('price').value = '';
       
+      // Reset to page 1
+      currentPage = 1;
       displayEvents(events);
     }
     
-    // Sort events function
+  // Sort events function
     function sortEvents() {
       const sortBy = document.getElementById('sort').value;
-      const eventsContainer = document.getElementById('events-container');
-      const eventCards = Array.from(eventsContainer.querySelectorAll('.event-card'));
       
-      eventCards.sort((a, b) => {
-        const aPrice = parseInt(a.querySelector('.event-price').textContent.replace(/\D/g, '') || 0);
-        const bPrice = parseInt(b.querySelector('.event-price').textContent.replace(/\D/g, '') || 0);
-        const aTitle = a.querySelector('h3').textContent;
-        const bTitle = b.querySelector('h3').textContent;
-        
-        if (sortBy === 'price-low') return aPrice - bPrice;
-        if (sortBy === 'price-high') return bPrice - aPrice;
-        if (sortBy === 'name') return aTitle.localeCompare(bTitle);
-        
-        // Default sorting by date (simplified for demo)
-        return 0;
-      });
+      // Create a copy of filtered events to sort
+      let sortedEvents = [...filteredEvents];
       
-      // Clear and re-add sorted events
-      eventsContainer.innerHTML = '';
-      eventCards.forEach(card => eventsContainer.appendChild(card));
+      if (sortBy === 'price-low') {
+        sortedEvents.sort((a, b) => a.price - b.price);
+      } else if (sortBy === 'price-high') {
+        sortedEvents.sort((a, b) => b.price - a.price);
+      } else if (sortBy === 'name') {
+        sortedEvents.sort((a, b) => a.title.localeCompare(b.title));
+      }
+      
+      // Reset to page 1 when sorting
+      currentPage = 1;
+      displayEvents(sortedEvents);
     }
     
     // Initialize events on page load
@@ -1142,3 +1202,4 @@
 </body>
 
 </html>
+
